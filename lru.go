@@ -9,20 +9,28 @@ import (
 	"math/rand"
 )
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyz"
-const maxLengthSeq = 12
+const letterBytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const maxLengthSeq = 8
+const minLengthSeq = 5
 
 func main() {
-	fmt.Println("Usage: ./lru {cacheSize int} {printIterations y/n} {cacheElem1 string} [...] {cacheElemN string}")
-	fmt.Println("Passing only one argument will generate a random accessSeq of lenght [1 .. maxLengthSeq] and solve it.")
+	fmt.Println("Usage 1: ./lru {cacheSize int} {printIterations y/n} {cacheElem1 string} [...] {cacheElemN string}")
+	fmt.Println("Usage 2: ./lru {cacheSize int} {numReplacements int}")
+	fmt.Println("Passing only two argument will generate a random access sequence of lenght [({cacheSize} + 1) .. {cacheSize} + {numReplacements}] and solve it.")
 
-	if(len(os.Args[:]) == 2){
+	if(len(os.Args[:]) == 3){
 		cacheSize, e := strconv.Atoi(os.Args[1])
 		if e != nil {
 		   fmt.Println(e)
 		}
+
+		numReplacements, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+		   fmt.Println(err)
+		}
 		rand.Seed(time.Now().UTC().UnixNano())
-		accessSeq := RandString(rand.Intn(maxLengthSeq))
+		// choose a random sequence length from [cacheSize, cacheSize + numReplacments]
+		accessSeq := RandString(cacheSize + numReplacements)
 		fmt.Println("Access Sequence:")
 		fmt.Println(strings.Join(accessSeq, ", "))
 		answerSeq := Lru(cacheSize, accessSeq, true)
@@ -95,7 +103,7 @@ func Lru(cacheSize int, inSeq []string, prints bool) (retSeq []string) {
 
 			if (prints) {
 				fmt.Println("iteration: ",i)
-				fmt.Println(lastAccess)
+			//	fmt.Println(lastAccess)
 				fmt.Println(strings.Join(retSeq, " | "))
 				}
 		}
