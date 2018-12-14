@@ -10,14 +10,13 @@ import (
 )
 
 const letterBytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const maxLengthSeq = 8
-const minLengthSeq = 5
 
 func main() {
-	fmt.Println("Usage 1: ./lru {cacheSize int} {printIterations y/n} {cacheElem1 string} [...] {cacheElemN string}")
-	fmt.Println("Usage 2: ./lru {cacheSize int} {numReplacements int}")
-	fmt.Println("Passing only two argument will generate a random access sequence of lenght [({cacheSize} + 1) .. {cacheSize} + {numReplacements}] and solve it.")
+	fmt.Println("Usage 1 Solve: ./lru {cacheSize int} {printIterations y/n} {cacheElem1 string} [...] {cacheElemN string}")
+	fmt.Println("Usage 2 Generate: ./lru {cacheSize int} {numReplacements int}")
+	fmt.Println("Passing only two arguments will generate a random access sequence of length {cacheSize} + {numReplacements} and solve it.")
 
+	// Check which usage case was chosen
 	if(len(os.Args[:]) == 3){
 		cacheSize, e := strconv.Atoi(os.Args[1])
 		if e != nil {
@@ -103,6 +102,7 @@ func Lru(cacheSize int, inSeq []string, prints bool) (retSeq []string) {
 
 			if (prints) {
 				fmt.Println("iteration: ",i)
+				// uncomment for more output of algo
 			//	fmt.Println(lastAccess)
 				fmt.Println(strings.Join(retSeq, " | "))
 				}
@@ -127,10 +127,7 @@ func GetIndexOf(in []string, c string) (index int) {
 }
 
 /**
-* Finds the index of the lowest element in the given array.
-*
-* @param accesses the array to search through
-* @return index with lowest value
+ Finds the index of the lowest element in the given array.
 */
 func FindLowest(accesses []int) (lowest int) {
 	lowest = 0;
