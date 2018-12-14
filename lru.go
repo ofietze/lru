@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
-	"math/rand"
+	"time"
 )
 
 const letterBytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -17,15 +17,15 @@ func main() {
 	fmt.Println("Passing only two arguments will generate a random access sequence of length {cacheSize} + {numReplacements} and solve it.")
 
 	// Check which usage case was chosen
-	if(len(os.Args[:]) == 3){
+	if len(os.Args[:]) == 3 {
 		cacheSize, e := strconv.Atoi(os.Args[1])
 		if e != nil {
-		   fmt.Println(e)
+			fmt.Println(e)
 		}
 
 		numReplacements, err := strconv.Atoi(os.Args[2])
 		if err != nil {
-		   fmt.Println(err)
+			fmt.Println(err)
 		}
 		rand.Seed(time.Now().UTC().UnixNano())
 		// choose a random sequence length from [cacheSize, cacheSize + numReplacments]
@@ -38,21 +38,21 @@ func main() {
 		return
 	}
 
-	if(len(os.Args[:]) < 4){
+	if len(os.Args[:]) < 4 {
 		fmt.Printf("Wrong number of arguments.")
 		return
 	}
 
 	cacheSize, e := strconv.Atoi(os.Args[1])
 	if e != nil {
-	   fmt.Println(e)
+		fmt.Println(e)
 	}
 
 	prints := true
 
-	if(os.Args[2] == "n") {
+	if os.Args[2] == "n" {
 		prints = false
-	} else if(os.Args[2] != "y"){
+	} else if os.Args[2] != "y" {
 		fmt.Println("Wrong printIterations argument.")
 	}
 
@@ -64,48 +64,48 @@ func main() {
 }
 
 func RandString(n int) []string {
-    s := make([]string, n)
-    for i := range s {
-        s[i] = string(letterBytes[rand.Intn(len(letterBytes))])
-    }
-    return s
+	s := make([]string, n)
+	for i := range s {
+		s[i] = string(letterBytes[rand.Intn(len(letterBytes))])
+	}
+	return s
 }
 
 func Lru(cacheSize int, inSeq []string, prints bool) (retSeq []string) {
 	lastAccess := make([]int, cacheSize)
 
-	if (len(inSeq) <= cacheSize) {
+	if len(inSeq) <= cacheSize {
 		retSeq = inSeq
 	} else {
 		retSeq = make([]string, cacheSize)
 		cacheElems := 0
 
-		for i := 0; i < len(inSeq); i++{
+		for i := 0; i < len(inSeq); i++ {
 			current := inSeq[i]
 			cacheIndex := GetIndexOf(retSeq, current)
 
-			if (cacheIndex > -1) {
+			if cacheIndex > -1 {
 				// cache hit
 				// refresh last access
 				lastAccess[cacheIndex] = i
-			} else if (i <= cacheElems && cacheElems < cacheSize/* && cacheIndex == -1*/) {
+			} else if i <= cacheElems && cacheElems < cacheSize /* && cacheIndex == -1*/ {
 				// cache is not full and cache miss on current data
 				retSeq[i] = current
-				lastAccess[i] = i;
+				lastAccess[i] = i
 				cacheElems++
 			} else {
 				// cache replacement
-				oldestAccess := FindLowest(lastAccess);
+				oldestAccess := FindLowest(lastAccess)
 				retSeq[oldestAccess] = current
-				lastAccess[oldestAccess] = i;
-			    }
+				lastAccess[oldestAccess] = i
+			}
 
-			if (prints) {
-				fmt.Println("iteration: ",i)
+			if prints {
+				fmt.Println("iteration: ", i)
 				// uncomment for more output of algo
-			//	fmt.Println(lastAccess)
+				//	fmt.Println(lastAccess)
 				fmt.Println(strings.Join(retSeq, " | "))
-				}
+			}
 		}
 	}
 	return
@@ -113,12 +113,12 @@ func Lru(cacheSize int, inSeq []string, prints bool) (retSeq []string) {
 
 /*
 * Finds the first index of {c} in string {in}
-*/
+ */
 func GetIndexOf(in []string, c string) (index int) {
 	index = -1
 
 	for i := 0; i < len(in); i++ {
-		if (in[i] == c){
+		if in[i] == c {
 			index = i
 			return
 		}
@@ -127,15 +127,15 @@ func GetIndexOf(in []string, c string) (index int) {
 }
 
 /**
- Finds the index of the lowest element in the given array.
+Finds the index of the lowest element in the given array.
 */
 func FindLowest(accesses []int) (lowest int) {
-	lowest = 0;
+	lowest = 0
 
 	for i := 0; i < len(accesses); i++ {
-	    if (accesses[lowest] > accesses[i]) {
-		lowest = i
-	    }
+		if accesses[lowest] > accesses[i] {
+			lowest = i
+		}
 	}
 	return lowest
 }
